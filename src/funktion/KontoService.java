@@ -2,6 +2,8 @@ package funktion;
 
 import datenbank.DatenbankService;
 
+import java.util.List;
+
 /**
  * Created by VaniR on 09.06.2018.
  * Project: PRUEFUNGSLEISTUNG PRAKTISCHE ANWENDUNGSENTWICKLUNG SS 2018
@@ -25,5 +27,10 @@ public class KontoService {
     public static Kontoinhaber getKunde(Integer kundennummer) {
         DatenbankService datenbank = new DatenbankService();
         return datenbank.datenLadenKontoinhaber(kundennummer);
+    }
+
+    public static List<Kontoinhaber> getAlleKunden() {
+        DatenbankService datenbank = new DatenbankService();
+        return datenbank.alleKundenLaden();
     }
 }

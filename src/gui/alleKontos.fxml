@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.HandlerAlleKontos">
+   <children>
+      <TableView fx:id="tblKonten" layoutX="14.0" layoutY="186.0">
+        <columns>
+          <TableColumn minWidth="130.0" prefWidth="-1.0" text="Kontonummer" />
+          <TableColumn minWidth="100.0" prefWidth="-1.0" text="Kontostand" />
+            <TableColumn minWidth="70.0" prefWidth="-1.0" text="Dispo" />
+        </columns>
+      </TableView>
+      <ComboBox fx:id="cbKunde" layoutX="14.0" layoutY="14.0" prefWidth="150.0" />
+      <Button layoutX="173.0" layoutY="14.0" mnemonicParsing="false" onAction="#kundeLadenPressed" text="Kunde laden" />
+      <Text layoutX="14.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="KontoStand Gesamt: " />
+      <TextField fx:id="tfGesamtsumme" layoutX="14.0" layoutY="116.0" />
+   </children>
+</AnchorPane>

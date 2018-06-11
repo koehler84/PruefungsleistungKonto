@@ -56,4 +56,8 @@ public class Kontoinhaber {
         this.kontos.add(konto);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

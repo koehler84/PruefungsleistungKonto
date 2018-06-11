@@ -41,6 +41,11 @@ public class HandlerMainWindow extends Stage {
 
     @FXML protected void kontoÜbersichtPressed(ActionEvent event) {
         actiontarget.setText("übersicht");
+        try {
+            new WindowLoader("../gui/alleKontos.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML protected void kontoPflegePressed(ActionEvent event) {

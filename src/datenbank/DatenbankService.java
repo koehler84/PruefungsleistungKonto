@@ -8,6 +8,8 @@ import funktion.Kontoinhaber;
 import funktion.Sparkonto;
 
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -17,8 +19,6 @@ import java.sql.*;
 public class DatenbankService {
     // Declare the JDBC objects.
     Connection con = null;
-    Statement stmt = null;
-    ResultSet rs = null;
     SQLServerDataSource ds = null;
 
     public DatenbankService() {
@@ -36,6 +36,8 @@ public class DatenbankService {
 
     public Konto datenLadenKonto(Integer kontonummer) {
         Konto konto = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
 
             con = ds.getConnection();
@@ -76,20 +78,22 @@ public class DatenbankService {
 
     private Sparkonto datenLadenSparkonto(Integer kontonummer, ResultSet rs) throws SQLException{
 
-        Sparkonto konto = new Sparkonto(this.rs.getInt(1), this.rs.getDate(2).toLocalDate(), this.rs.getFloat(3), this.rs.getInt(5));
+        Sparkonto konto = new Sparkonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getFloat(3), rs.getInt(5));
 
         return konto;
     }
 
     private Girokonto datenLadenGirokonto(Integer kontonummer, ResultSet rs) throws SQLException{
 
-        Girokonto konto = new Girokonto(this.rs.getInt(1), this.rs.getDate(2).toLocalDate(), this.rs.getFloat(3), this.rs.getFloat(4), this.rs.getInt(5));
+        Girokonto konto = new Girokonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getFloat(3), rs.getFloat(4), rs.getInt(5));
 
         return konto;
     }
 
     public Kontoinhaber datenLadenKontoinhaber(Integer kundennummer) {
         Kontoinhaber kontoinhaber = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
 
             con = ds.getConnection();
@@ -136,8 +140,10 @@ public class DatenbankService {
     }
 
     public void datenSpeichernKontoinhaber(Kontoinhaber kontoinhaber) {
+        Statement stmt = null;
         try {
             String sql;
+
             if (datenLadenKontoinhaber(kontoinhaber.getKundenNummer()) == null) {
                 sql = "INSERT INTO kontoinhaber(kundennummer, name, adresse) VALUES ("
                         + kontoinhaber.getKundenNummer() + ", '" + kontoinhaber.getName()
@@ -147,6 +153,7 @@ public class DatenbankService {
                         + kontoinhaber.getAdresse() + "' WHERE kundennummer = " + kontoinhaber.getKundenNummer();
             }
             con = ds.getConnection();
+
             stmt = con.createStatement();
             stmt.execute(sql);
 
@@ -154,10 +161,6 @@ public class DatenbankService {
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (rs != null) try {
-                rs.close();
-            } catch (Exception e) {
-            }
             if (stmt != null) try {
                 stmt.close();
             } catch (Exception e) {
@@ -170,6 +173,7 @@ public class DatenbankService {
     }
 
     public void datenSpeichernKonto(Konto konto) {
+        Statement stmt = null;
         try {
             Float dispo = null;
             String sql;
@@ -195,10 +199,6 @@ public class DatenbankService {
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (rs != null) try {
-                rs.close();
-            } catch (Exception e) {
-            }
             if (stmt != null) try {
                 stmt.close();
             } catch (Exception e) {
@@ -211,12 +211,45 @@ public class DatenbankService {
     }
 
     public void datenLoeschenKonto(Konto konto) {
+        Statement stmt = null;
         try {
             String sql = "DELETE FROM Konto WHERE Kontonummer = " + konto.getKontoNummer();
 
             con = ds.getConnection();
             stmt = con.createStatement();
             stmt.execute(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (stmt != null) try {
+                stmt.close();
+            } catch (Exception e) {
+            }
+            if (con != null) try {
+                con.close();
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    public List<Kontoinhaber> alleKundenLaden() {
+        Statement stmt = null;
+        ResultSet rs = null;
+        List<Kontoinhaber> kontoinhaberList = new LinkedList<>();
+        try {
+            String sql = "SELECT Kundennummer FROM Kontoinhaber";
+
+
+
+            con = ds.getConnection();
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            while ( rs.next() ) {
+                kontoinhaberList.add(datenLadenKontoinhaber(rs.getInt("Kundennummer")));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -234,5 +267,6 @@ public class DatenbankService {
 
             }
         }
+        return kontoinhaberList;
     }
 }
