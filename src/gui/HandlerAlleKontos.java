@@ -10,6 +10,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -30,24 +32,35 @@ public class HandlerAlleKontos {
     }
 
     @FXML private ComboBox cbKunde;
-    @FXML private TableView<Kontoinhaber> tblKonten;
+    @FXML private TableView<KontoProperties> tblKonten;
     @FXML private TextField tfGesamtsumme;
     @FXML private TableColumn<KontoProperties, Integer> tcKontonummer;
-    @FXML private TableColumn<Kontoinhaber, String>  tcKontostand;
-    @FXML private TableColumn<Kontoinhaber, String>  tcDispo;
+    @FXML private TableColumn<KontoProperties, String>  tcKontostand;
+    @FXML private TableColumn<KontoProperties, String>  tcDispo;
+    @FXML private TableColumn<KontoProperties, LocalDate> tcEroeffnungsdatum;
 
     @FXML protected void kundeLadenPressed(ActionEvent event) {
+        BigDecimal kumulierterKontostand = new BigDecimal(0);
+        tblKonten.getItems().clear();
         Kontoinhaber kunde = (Kontoinhaber) cbKunde.getValue();
         for ( Konto kontenInKunde: kunde.getKontos()) {
             if (kontenInKunde instanceof Sparkonto) {
                 konten.add(new KontoProperties(kontenInKunde.getKontoNummer(), kontenInKunde.getEroeffnungsdatum(), null,
                         kontenInKunde.getKontostand()));
+                kumulierterKontostand = kumulierterKontostand.add(kontenInKunde.getKontostand());
             } else {
                 Girokonto gkonto = (Girokonto) kontenInKunde;
                 konten.add(new KontoProperties(kontenInKunde.getKontoNummer(), kontenInKunde.getEroeffnungsdatum(), gkonto.getDispoLimit(),
                         kontenInKunde.getKontostand()));
+                kumulierterKontostand = kumulierterKontostand.add(kontenInKunde.getKontostand());
             }
         }
         tcKontonummer.setCellValueFactory(cellData -> cellData.getValue().kontonummerProperty().asObject());
+        tcDispo.setCellValueFactory(cellData -> cellData.getValue().dispoProperty());
+        tcKontostand.setCellValueFactory(cellData -> cellData.getValue().kontostandProperty());
+        tcEroeffnungsdatum.setCellValueFactory(cellData -> cellData.getValue().eroeffnungsdatumProperty());
+        tblKonten.setItems(konten);
+
+        tfGesamtsumme.setText(kumulierterKontostand.toString());
     }
 }

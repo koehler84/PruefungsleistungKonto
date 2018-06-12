@@ -9,16 +9,17 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.HandlerAlleKontos">
    <children>
-      <TableView fx:id="tblKonten" layoutX="14.0" layoutY="186.0">
+      <TableView fx:id="tblKonten" layoutX="14.0" layoutY="186.0" prefHeight="400.0" prefWidth="574.0">
         <columns>
-          <TableColumn fx:id="tcKontonummer" minWidth="130.0" prefWidth="-1.0" text="Kontonummer" />
-          <TableColumn fx:id="tcKontostand" minWidth="100.0" prefWidth="-1.0" text="Kontostand" />
-            <TableColumn fx:id="tcDispo" minWidth="70.0" prefWidth="-1.0" text="Dispo" />
+          <TableColumn fx:id="tcKontonummer" minWidth="69.0" prefWidth="69.0" text="Kontonr" />
+          <TableColumn fx:id="tcKontostand" minWidth="100.0" prefWidth="208.0" text="Kontostand" />
+            <TableColumn fx:id="tcDispo" minWidth="70.0" prefWidth="163.0" text="Dispo" />
+            <TableColumn fx:id="tcEroeffnungsdatum" maxWidth="6000.0" minWidth="52.0" prefWidth="133.0" text="Eröffnungsdatum" />
         </columns>
       </TableView>
       <ComboBox fx:id="cbKunde" layoutX="14.0" layoutY="14.0" prefWidth="150.0" />
       <Button layoutX="173.0" layoutY="14.0" mnemonicParsing="false" onAction="#kundeLadenPressed" text="Kunde laden" />
-      <Text layoutX="14.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="KontoStand Gesamt: " />
-      <TextField fx:id="tfGesamtsumme" layoutX="14.0" layoutY="116.0" />
+      <Text layoutX="14.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kontostand Gesamt: " />
+      <TextField fx:id="tfGesamtsumme" disable="true" layoutX="14.0" layoutY="116.0" />
    </children>
 </AnchorPane>

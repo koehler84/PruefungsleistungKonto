@@ -1,11 +1,9 @@
 package gui;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 
 /**
@@ -15,14 +13,18 @@ import java.time.LocalDate;
 public class KontoProperties {
     private final IntegerProperty kontonummer;
     private final ObjectProperty<LocalDate> eroeffnungsdatum;
-    private final ObjectProperty<BigDecimal> dispo;
-    private final ObjectProperty<BigDecimal> kontostand;
+    private final StringProperty dispo;
+    private final StringProperty kontostand;
 
     public KontoProperties(Integer kontonummer , LocalDate eroeffnungsdatum, BigDecimal dispo, BigDecimal kontostand) {
         this.kontonummer = new SimpleIntegerProperty(kontonummer);
         this.eroeffnungsdatum = new SimpleObjectProperty<LocalDate>(eroeffnungsdatum);
-        this.dispo = new SimpleObjectProperty<BigDecimal>(dispo);
-        this.kontostand = new SimpleObjectProperty<BigDecimal>(kontostand);
+        if (dispo == null) {
+            this.dispo = new SimpleStringProperty("Kein Girokonto");
+        } else {
+            this.dispo = new SimpleStringProperty(new DecimalFormat("#0.00 €").format(dispo.setScale(2)).toString());
+        }
+        this.kontostand = new SimpleStringProperty(new DecimalFormat("#0.00 €").format(kontostand.setScale(2)).toString());
     }
 
     public int getKontonummer() {
@@ -49,27 +51,27 @@ public class KontoProperties {
         this.eroeffnungsdatum.set(eroeffnungsdatum);
     }
 
-    public BigDecimal getDispo() {
+    public String getDispo() {
         return dispo.get();
     }
 
-    public ObjectProperty<BigDecimal> dispoProperty() {
+    public StringProperty dispoProperty() {
         return dispo;
     }
 
-    public void setDispo(BigDecimal dispo) {
+    public void setDispo(String dispo) {
         this.dispo.set(dispo);
     }
 
-    public BigDecimal getKontostand() {
+    public String getKontostand() {
         return kontostand.get();
     }
 
-    public ObjectProperty<BigDecimal> kontostandProperty() {
+    public StringProperty kontostandProperty() {
         return kontostand;
     }
 
-    public void setKontostand(BigDecimal kontostand) {
+    public void setKontostand(String kontostand) {
         this.kontostand.set(kontostand);
     }
 }
