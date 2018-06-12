@@ -29,22 +29,20 @@ public class Girokonto extends Konto{
         }
     }
 
-    public Boolean aufDispoAenderung(BigDecimal aufDispoAenderung) {
+    public void aufDispoAenderung(BigDecimal aufDispoAenderung) throws Exception{
         if (super.getKontostand().multiply(BigDecimal.valueOf(-1)).compareTo(aufDispoAenderung) <= 0) {
             dispoLimit = aufDispoAenderung;
-            return true;
         } else {
-            return false;
+            throw new DispoAenderungUngueltungException("Kontostand nicht ausreichend für Dispoänderung");
         }
     }
 
-    public boolean ueberweisen(BigDecimal betrag, Girokonto empfaengerKonto) {
-        if (getKontostand().compareTo(betrag) >= 0 ) {
+    public void ueberweisen(BigDecimal betrag, Girokonto empfaengerKonto) throws Exception {
+        if (getKontostand().add(dispoLimit).compareTo(betrag) >= 0 ) {
             setKontostand(getKontostand().subtract(betrag));
             empfaengerKonto.setKontostand(empfaengerKonto.getKontostand().add(betrag));
-            return true;
         } else {
-            return false;
+            throw new NichtGenuegendGeldException("Das Senderkonto verfügt nicht über ausreichend Mittel");
         }
     }
 }

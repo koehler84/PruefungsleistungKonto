@@ -52,15 +52,22 @@ public class HandlerKontoAnlegen {
 
         }
     }
+    //todo: check ob neues datum nach heute
 
     @FXML protected void kundennummerPressed(KeyEvent event) {
         //todo how the fuck do i make this? lost focus funktion exist?
-        Kontoinhaber kunde = KontoService.getKunde(Integer.parseInt(tfKundennummer.getText()));
-        if (kunde != null) {
-            tfAdresse.setText(kunde.getAdresse());
-            tfName.setText(kunde.getName());
+        try {
+            Kontoinhaber kunde = KontoService.getKunde(Integer.parseInt(tfKundennummer.getText()));
+            if (kunde != null) {
+                tfAdresse.setText(kunde.getAdresse());
+                tfName.setText(kunde.getName());
+            }
+            event.consume();
+        } catch (Exception e){
+            //todo KontoAnlegen
+            e.printStackTrace();
+
         }
-        event.consume();
     }
 
     @FXML protected void speichernPressed(ActionEvent event) {

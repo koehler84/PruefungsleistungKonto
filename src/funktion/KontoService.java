@@ -9,27 +9,27 @@ import java.util.List;
  * Project: PRUEFUNGSLEISTUNG PRAKTISCHE ANWENDUNGSENTWICKLUNG SS 2018
  */
 public class KontoService {
-    public static Konto getKonto(Integer kontonummer) {
+    public static Konto getKonto(Integer kontonummer) throws Exception{
         DatenbankService datenbank = new DatenbankService();
         return datenbank.datenLadenKonto(kontonummer);
     }
 
-    public static void safeKonto(Konto konto) {
+    public static void safeKonto(Konto konto) throws Exception{
         DatenbankService datenbank = new DatenbankService();
         datenbank.datenSpeichernKonto(konto);
     }
 
-    public static void deleteKonto(Konto konto) {
+    public static void deleteKonto(Konto konto) throws Exception{
         DatenbankService datenbank = new DatenbankService();
         datenbank.datenLoeschenKonto(konto);
     }
 
-    public static Kontoinhaber getKunde(Integer kundennummer) {
+    public static Kontoinhaber getKunde(Integer kundennummer) throws Exception{
         DatenbankService datenbank = new DatenbankService();
         return datenbank.datenLadenKontoinhaber(kundennummer);
     }
 
-    public static List<Kontoinhaber> getAlleKunden() {
+    public static List<Kontoinhaber> getAlleKunden() throws Exception{
         DatenbankService datenbank = new DatenbankService();
         return datenbank.alleKundenLaden();
     }

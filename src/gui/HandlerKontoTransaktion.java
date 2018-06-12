@@ -26,41 +26,39 @@ public class HandlerKontoTransaktion {
     @FXML private TextField tfUeberweisung;
     @FXML private Button btnUeberweisung;
 
+    //todo checks Empfänger Sender per Exception + überweisung genug geld?
     @FXML protected void kontoLadenPressed(ActionEvent event) {
         btnUeberweisung.setDisable(true);
-        Konto kontoSender = KontoService.getKonto(Integer.parseInt(tfSenderKontonummer.getText()));
-        Konto kontoEmpfaenger = KontoService.getKonto(Integer.parseInt(tfEmpfaengerKontonummer.getText()));
-        if (kontoSender.getClass().getSimpleName().equals("Sparkonto")) {
+        try {
+            kontoSender = KontoService.getKonto(Integer.parseInt(tfSenderKontonummer.getText())).parseToGirokonto();
+            kontoEmpfaenger = KontoService.getKonto(Integer.parseInt(tfEmpfaengerKontonummer.getText())).parseToGirokonto();
+
+                tfSenderKontostand.setText(String.format("%.2f €", kontoSender.getKontostand()));
+                tfEmpfaengerKontostand.setText(String.format("%.2f €", kontoEmpfaenger.getKontostand()));
+                btnUeberweisung.setDisable(false);
+
+        } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
-            alert.setContentText("Senderkonto kein Girokonto");
+            alert.setContentText(e.toString());
             alert.showAndWait();
-            btnUeberweisung.setDisable(true);
-        } else if (kontoEmpfaenger.getClass().getSimpleName().equals("Sparkonto")) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setContentText("Empfängerkonto kein Girokonto");
-            alert.showAndWait();
-            btnUeberweisung.setDisable(true);
-        } else {
-            this.kontoSender = (Girokonto)kontoSender;
-            this.kontoEmpfaenger = (Girokonto)kontoEmpfaenger;
-            tfSenderKontostand.setText(String.format("%.2f €",kontoSender.getKontostand()));
-            tfEmpfaengerKontostand.setText(String.format("%.2f €",kontoEmpfaenger.getKontostand()));
-            btnUeberweisung.setDisable(false);
         }
     }
 
     @FXML protected void ueberweisungPressed(ActionEvent event) {
-        if (!kontoSender.ueberweisen(new BigDecimal(tfUeberweisung.getText()), kontoEmpfaenger)){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setContentText("Senderkonto verfügt nicht über ausreichend Geld");
-            alert.showAndWait();
-            btnUeberweisung.setDisable(true);
-        } else {
+        try {
+            kontoSender.ueberweisen(new BigDecimal(tfUeberweisung.getText()), kontoEmpfaenger);
+
             KontoService.safeKonto(kontoSender);
             KontoService.safeKonto(kontoEmpfaenger);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
+            btnUeberweisung.setDisable(true);
+            tfSenderKontostand.setText(String.format("%.2f €", kontoSender.getKontostand()));
+            tfEmpfaengerKontostand.setText(String.format("%.2f €", kontoEmpfaenger.getKontostand()));
         }
 
     }

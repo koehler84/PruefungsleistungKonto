@@ -5,10 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,11 +19,18 @@ public class HandlerAlleKontos {
     private ObservableList<KontoProperties> konten = FXCollections.observableArrayList();
     private List<Kontoinhaber> alleKunden;
     @FXML public void initialize() {
-        alleKunden = KontoService.getAlleKunden();
-        for (Kontoinhaber kontoinhaber: alleKunden) {
-            cbKunde.getItems().add(kontoinhaber);
+        try {
+            alleKunden = KontoService.getAlleKunden();
+            for (Kontoinhaber kontoinhaber : alleKunden) {
+                cbKunde.getItems().add(kontoinhaber);
+            }
+            cbKunde.setValue(alleKunden.get(0));
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
         }
-        cbKunde.setValue(alleKunden.get(0));
         cbKunde.setEditable(false);
         tblKonten.setEditable(false);
     }

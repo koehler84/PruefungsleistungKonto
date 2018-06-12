@@ -52,4 +52,11 @@ public class Konto {
     public void setKundennummerInhaber(Integer kundennummerInhaber) {
         this.kundennummerInhaber = kundennummerInhaber;
     }
+
+    public Girokonto parseToGirokonto() throws Exception {
+        if (this instanceof Girokonto) {
+            return (Girokonto) this;
+        }
+        throw new KeinGirokontoException(this.getKontoNummer() + " ist kein Girokonto");
+    }
 }

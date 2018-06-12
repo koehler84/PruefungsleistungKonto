@@ -38,30 +38,39 @@ public class HandlerKontoPflegen {
         btnLoeschen.setDisable(true);
         txtDispoaenderungText.setVisible(false);
         tfDispoaenderung.setVisible(false);
-        konto = KontoService.getKonto(Integer.parseInt(tfKontonummer.getText()));
 
-        tfKontostand.setText(String.format("%.2f €",konto.getKontostand()));
-        dpEroeffnungsdatum.setValue(konto.getEroeffnungsdatum());
-        if (konto.getClass().getSimpleName().equals("Girokonto")) {
-            Girokonto gkonto = (Girokonto) konto;
-            tfDispo.setText(String.format("%.2f €",gkonto.getDispoLimit()));
-            btnDispo.setDisable(false);
-            txtDispoaenderungText.setVisible(true);
-            tfDispoaenderung.setVisible(true);
+        try {
+            konto = KontoService.getKonto(Integer.parseInt(tfKontonummer.getText()));
+
+            tfKontostand.setText(String.format("%.2f €", konto.getKontostand()));
+            dpEroeffnungsdatum.setValue(konto.getEroeffnungsdatum());
+            if (konto instanceof Girokonto) {
+                Girokonto gkonto = (Girokonto) konto;
+                tfDispo.setText(String.format("%.2f €", gkonto.getDispoLimit()));
+                btnDispo.setDisable(false);
+                txtDispoaenderungText.setVisible(true);
+                tfDispoaenderung.setVisible(true);
+            }
+            btnLoeschen.setDisable(false);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
         }
-
-        btnLoeschen.setDisable(false);
 
 
     }
     @FXML protected void dispoPressed(ActionEvent event) {
-        Girokonto gkonto = (Girokonto) konto;
-        if (gkonto.aufDispoAenderung(new BigDecimal(tfDispoaenderung.getText()))) {
+        try {
+            Girokonto gkonto = (Girokonto) konto;
+            gkonto.aufDispoAenderung(new BigDecimal(tfDispoaenderung.getText()));
             KontoService.safeKonto(gkonto);
-        } else {
+            tfDispo.setText(String.format("%.2f €", gkonto.getDispoLimit()));
+        } catch (Exception e){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
-            alert.setContentText("Dispoänderung ungültig");
+            alert.setContentText(e.getLocalizedMessage());
             alert.showAndWait();
         }
         btnDispo.setDisable(true);
@@ -71,10 +80,18 @@ public class HandlerKontoPflegen {
     }
 
     @FXML protected void loeschenPressed(ActionEvent event) {
-        KontoService.deleteKonto(konto);
+        try {
+            KontoService.deleteKonto(konto);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
+        }
         btnDispo.setDisable(true);
         btnLoeschen.setDisable(true);
         txtDispoaenderungText.setVisible(false);
         tfDispoaenderung.setVisible(false);
+
     }
 }

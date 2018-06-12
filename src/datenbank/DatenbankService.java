@@ -22,6 +22,7 @@ public class DatenbankService {
     Connection con = null;
     SQLServerDataSource ds = null;
 
+    //todo preparedStatements
     public DatenbankService() {
         // Establish the connection.
         ds = new SQLServerDataSource();
@@ -35,239 +36,199 @@ public class DatenbankService {
         ds.setIntegratedSecurity(false);
     }
 
-    public Konto datenLadenKonto(Integer kontonummer) {
+    public Konto datenLadenKonto(Integer kontonummer) throws Exception{
         Konto konto = null;
         Statement stmt = null;
         ResultSet rs = null;
-        try {
 
-            con = ds.getConnection();
+        con = ds.getConnection();
 
-            String queryKonto = "SELECT * FROM Konto WHERE Kontonummer = " + kontonummer;
+        String queryKonto = "SELECT * FROM Konto WHERE Kontonummer = " + kontonummer;
 
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(queryKonto);
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(queryKonto);
 
-            while ( rs.next() ) {
-                if (rs.getString(4) == null){
-                    konto = datenLadenSparkonto(kontonummer, rs);
-                } else {
-                    konto = datenLadenGirokonto(kontonummer, rs);
-                }
+
+        while ( rs.next() ) {
+            if (rs.getString("Dispo") == null){
+                konto = datenLadenSparkonto(kontonummer, rs);
+            } else {
+                konto = datenLadenGirokonto(kontonummer, rs);
             }
         }
 
+        if (konto == null) {
+            throw new KontoNichtVorhandenException("Kontonummer " + kontonummer + " nicht vergeben.");
+        }
         // Handle any errors that may have occurred.
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (rs != null) try {
-                rs.close();
-            } catch (Exception e) {
-            }
-            if (stmt != null) try {
-                stmt.close();
-            } catch (Exception e) {
-            }
-            if (con != null) try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
+
+
+        if (rs != null) rs.close();
+        if (stmt != null) stmt.close();
+        if (con != null) con.close();
+
         return konto;
     }
 
     private Sparkonto datenLadenSparkonto(Integer kontonummer, ResultSet rs) throws SQLException{
 
-        Sparkonto konto = new Sparkonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getBigDecimal(3), rs.getInt(5));
+        Sparkonto konto = new Sparkonto(rs.getInt("Kontonummer"),
+                rs.getDate("Eroeffnungsdatum").toLocalDate(),
+                rs.getBigDecimal("Kontostand"),
+                rs.getInt("Kontoinhaber_Kundennummer"));
 
         return konto;
     }
 
     private Girokonto datenLadenGirokonto(Integer kontonummer, ResultSet rs) throws SQLException{
 
-        Girokonto konto = new Girokonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getBigDecimal(3), rs.getBigDecimal(4), rs.getInt(5));
+        Girokonto konto = new Girokonto(rs.getInt("Kontonummer"),
+                rs.getDate("Eroeffnungsdatum").toLocalDate(),
+                rs.getBigDecimal("Kontostand"),
+                rs.getBigDecimal("Dispo"),
+                rs.getInt("Kontoinhaber_Kundennummer"));
 
         return konto;
     }
 
-    public Kontoinhaber datenLadenKontoinhaber(Integer kundennummer) {
+    public Kontoinhaber datenLadenKontoinhaber(Integer kundennummer) throws Exception{
         Kontoinhaber kontoinhaber = null;
         Statement stmt = null;
         ResultSet rs = null;
-        try {
 
-            con = ds.getConnection();
+        con = ds.getConnection();
 
-            String queryKontoinhaber = "SELECT * FROM Kontoinhaber WHERE kundennummer = " + kundennummer;
+        String queryKontoinhaber = "SELECT * FROM Kontoinhaber WHERE kundennummer = " + kundennummer;
 
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(queryKontoinhaber);
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(queryKontoinhaber);
 
-            while ( rs.next() ) {
-                kontoinhaber = new Kontoinhaber(rs.getInt(1), rs.getString(2), rs.getString(3));
-            }
+        while ( rs.next() ) {
+            kontoinhaber = new Kontoinhaber(rs.getInt("Kundennummer"),
+                    rs.getString("Name"),
+                    rs.getString("Adresse"));
+        }
 
-            String queryKontos = "SELECT * FROM konto WHERE Kontoinhaber_Kundennummer = " + kundennummer;
-            rs = stmt.executeQuery(queryKontos);
+        if (kontoinhaber == null) {
+            throw new KeinKontoinhaberVorhandenException("Es existieren kein Kontoinhaber");
+        }
 
-            while ( rs.next() ) {
-                if (rs.getString(4) == null){
-                    kontoinhaber.addKonto(datenLadenSparkonto(rs.getInt(1), rs));
-                } else {
-                    kontoinhaber.addKonto(datenLadenGirokonto(rs.getInt(1), rs));
-                }
+        String queryKontos = "SELECT * FROM konto WHERE Kontoinhaber_Kundennummer = " + kundennummer;
+        rs = stmt.executeQuery(queryKontos);
+
+        while ( rs.next() ) {
+            if (rs.getString("Dispo") == null){
+                kontoinhaber.addKonto(datenLadenSparkonto(rs.getInt("Kontonummer"), rs));
+            } else {
+                kontoinhaber.addKonto(datenLadenGirokonto(rs.getInt("Kontonummer"), rs));
             }
         }
 
-        // Handle any errors that may have occurred.
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (rs != null) try {
-                rs.close();
-            } catch (Exception e) {
-            }
-            if (stmt != null) try {
-                stmt.close();
-            } catch (Exception e) {
-            }
-            if (con != null) try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
+
+
+
+        if (rs != null) rs.close();
+        if (stmt != null) stmt.close();
+        if (con != null) con.close();
         return kontoinhaber;
     }
 
-    public void datenSpeichernKontoinhaber(Kontoinhaber kontoinhaber) {
+    public void datenSpeichernKontoinhaber(Kontoinhaber kontoinhaber) throws Exception {
         Statement stmt = null;
-        try {
-            String sql;
 
-            if (datenLadenKontoinhaber(kontoinhaber.getKundenNummer()) == null) {
-                sql = "INSERT INTO kontoinhaber(kundennummer, name, adresse) VALUES ("
-                        + kontoinhaber.getKundenNummer() + ", '" + kontoinhaber.getName()
-                        + "' , '" + kontoinhaber.getAdresse() + "')";
-            } else {
-                sql = "UPDATE kontoinhaber SET name = '" + kontoinhaber.getName()  + "', adresse = '"
-                        + kontoinhaber.getAdresse() + "' WHERE kundennummer = " + kontoinhaber.getKundenNummer();
-            }
-            con = ds.getConnection();
+        String sql;
 
-            stmt = con.createStatement();
-            stmt.execute(sql);
-
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (stmt != null) try {
-                stmt.close();
-            } catch (Exception e) {
-            }
-            if (con != null) try {
-                con.close();
-            } catch (Exception e) {
-            }
+        if (datenLadenKontoinhaber(kontoinhaber.getKundenNummer()) == null) {
+            sql = "INSERT INTO kontoinhaber(kundennummer, name, adresse) VALUES ("
+                    + kontoinhaber.getKundenNummer() + ", '" + kontoinhaber.getName()
+                    + "' , '" + kontoinhaber.getAdresse() + "')";
+        } else {
+            sql = "UPDATE kontoinhaber SET name = '" + kontoinhaber.getName()  + "', adresse = '"
+                    + kontoinhaber.getAdresse() + "' WHERE kundennummer = " + kontoinhaber.getKundenNummer();
         }
-    }
+        con = ds.getConnection();
 
-    public void datenSpeichernKonto(Konto konto) {
-        Statement stmt = null;
-        try {
-            BigDecimal dispo = null;
-            String sql;
-            if (konto.getClass().getSimpleName().equals("Girokonto")) {
-                Girokonto gkonto = (Girokonto) konto;
-                dispo = gkonto.getDispoLimit();
+        stmt = con.createStatement();
+        stmt.execute(sql);
 
-            }
-            if (datenLadenKonto(konto.getKontoNummer()) == null) {
-                sql = "INSERT INTO konto(Kontonummer, Eroeffnungsdatum, Kontostand, Dispo, Kontoinhaber_Kundennummer) VALUES ("
-                        + konto.getKontoNummer() + ", '" + konto.getEroeffnungsdatum()+ "', "+ konto.getKontostand()
-                        + ", " + dispo + ", " + konto.getKundennummerInhaber() +")";
-            } else {
-                sql = "UPDATE Konto SET Eroeffnungsdatum = '" + konto.getEroeffnungsdatum()  + "', Kontostand = "
-                        + konto.getKontostand() + ", Dispo = "
-                        + dispo +", Kontoinhaber_Kundennummer = "
-                        + konto.getKundennummerInhaber() +" WHERE Kontonummer = " + konto.getKontoNummer();
-            }
 
-            con = ds.getConnection();
-            stmt = con.createStatement();
-            stmt.execute(sql);
-        }catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (stmt != null) try {
-                stmt.close();
-            } catch (Exception e) {
-            }
-            if (con != null) try {
-                con.close();
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    public void datenLoeschenKonto(Konto konto) {
-        Statement stmt = null;
-        try {
-            String sql = "DELETE FROM Konto WHERE Kontonummer = " + konto.getKontoNummer();
-
-            con = ds.getConnection();
-            stmt = con.createStatement();
-            stmt.execute(sql);
+        if (stmt != null) try {
+            stmt.close();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (stmt != null) try {
-                stmt.close();
-            } catch (Exception e) {
-            }
-            if (con != null) try {
-                con.close();
-            } catch (Exception e) {
-
-            }
         }
+        if (con != null) try {
+            con.close();
+        } catch (Exception e) {
+        }
+
     }
 
-    public List<Kontoinhaber> alleKundenLaden() {
+    public void datenSpeichernKonto(Konto konto) throws Exception{
+        Statement stmt = null;
+
+        BigDecimal dispo = null;
+        String sql;
+        if (konto.getClass().getSimpleName().equals("Girokonto")) {
+            Girokonto gkonto = (Girokonto) konto;
+            dispo = gkonto.getDispoLimit();
+        }
+        if (datenLadenKonto(konto.getKontoNummer()) == null) {
+            sql = "INSERT INTO konto(Kontonummer, Eroeffnungsdatum, Kontostand, Dispo, Kontoinhaber_Kundennummer) VALUES ("
+                    + konto.getKontoNummer() + ", '" + konto.getEroeffnungsdatum()+ "', "+ konto.getKontostand()
+                    + ", " + dispo + ", " + konto.getKundennummerInhaber() +")";
+        } else {
+            sql = "UPDATE Konto SET Eroeffnungsdatum = '" + konto.getEroeffnungsdatum()  + "', Kontostand = "
+                    + konto.getKontostand() + ", Dispo = "
+                    + dispo +", Kontoinhaber_Kundennummer = "
+                    + konto.getKundennummerInhaber() +" WHERE Kontonummer = " + konto.getKontoNummer();
+        }
+
+        con = ds.getConnection();
+        stmt = con.createStatement();
+        stmt.execute(sql);
+
+        if (stmt != null) stmt.close();
+        if (con != null) con.close();
+    }
+
+    public void datenLoeschenKonto(Konto konto) throws Exception{
+        Statement stmt = null;
+
+        String sql = "DELETE FROM Konto WHERE Kontonummer = " + konto.getKontoNummer();
+
+        con = ds.getConnection();
+        stmt = con.createStatement();
+        stmt.execute(sql);
+
+        if (stmt != null) stmt.close();
+        if (con != null) con.close();
+
+    }
+
+    public List<Kontoinhaber> alleKundenLaden() throws Exception{
         Statement stmt = null;
         ResultSet rs = null;
         List<Kontoinhaber> kontoinhaberList = new LinkedList<>();
-        try {
-            String sql = "SELECT Kundennummer FROM Kontoinhaber";
 
+        String sql = "SELECT Kundennummer FROM Kontoinhaber";
 
+        con = ds.getConnection();
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(sql);
 
-            con = ds.getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            while ( rs.next() ) {
-                kontoinhaberList.add(datenLadenKontoinhaber(rs.getInt("Kundennummer")));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (rs != null) try {
-                rs.close();
-            } catch (Exception e) {
-            }
-            if (stmt != null) try {
-                stmt.close();
-            } catch (Exception e) {
-            }
-            if (con != null) try {
-                con.close();
-            } catch (Exception e) {
-
-            }
+        while ( rs.next() ) {
+            kontoinhaberList.add(datenLadenKontoinhaber(rs.getInt("Kundennummer")));
         }
+
+        if (kontoinhaberList == null) {
+                throw new KeineKontosVorhandenException("Es existieren keine Konten");
+        }
+
+
+        if (rs != null) rs.close();
+        if (stmt != null) stmt.close();
+        if (con != null) con.close();
+
         return kontoinhaberList;
     }
 }
