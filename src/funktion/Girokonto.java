@@ -1,5 +1,6 @@
 package funktion;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -7,29 +8,29 @@ import java.time.LocalDate;
  * Project: PRUEFUNGSLEISTUNG PRAKTISCHE ANWENDUNGSENTWICKLUNG SS 2018
  */
 public class Girokonto extends Konto{
-    private Float dispoLimit;
+    private BigDecimal dispoLimit;
 
-    public Girokonto(Integer kontoNummer, LocalDate eroeffnungsdatum, Float kontostand, Float dispoLimit, Integer kundennummerInhaber) {
+    public Girokonto(Integer kontoNummer, LocalDate eroeffnungsdatum, BigDecimal kontostand, BigDecimal dispoLimit, Integer kundennummerInhaber) {
         super(kontoNummer, eroeffnungsdatum, kontostand, kundennummerInhaber);
         this.dispoLimit = dispoLimit;
     }
 
-    public Float getDispoLimit() {
+    public BigDecimal getDispoLimit() {
         return dispoLimit;
     }
 
-    public void einzahlen(Float betrag) {
-        super.setKontostand(super.getKontostand() + betrag);
+    public void einzahlen(BigDecimal betrag) {
+        super.setKontostand(super.getKontostand().add(betrag));
     }
 
-    public void auszahlen(Float betrag) {
-        if (super.getKontostand() + dispoLimit >= betrag) {
-            super.setKontostand(super.getKontostand() - betrag);
+    public void auszahlen(BigDecimal betrag) {
+        if (super.getKontostand().add(dispoLimit).compareTo(betrag) >= 0 ) {
+            super.setKontostand(super.getKontostand().subtract(betrag));
         }
     }
 
-    public Boolean aufDispoAenderung(Float aufDispoAenderung) {
-        if (super.getKontostand() * -1 < aufDispoAenderung ) {
+    public Boolean aufDispoAenderung(BigDecimal aufDispoAenderung) {
+        if (super.getKontostand().multiply(BigDecimal.valueOf(-1)).compareTo(aufDispoAenderung) <= 0) {
             dispoLimit = aufDispoAenderung;
             return true;
         } else {
@@ -37,10 +38,10 @@ public class Girokonto extends Konto{
         }
     }
 
-    public boolean ueberweisen(Float betrag, Girokonto empfaengerKonto) {
-        if (getKontostand() >= betrag ) {
-            setKontostand(getKontostand() - betrag);
-            empfaengerKonto.setKontostand(empfaengerKonto.getKontostand() + betrag);
+    public boolean ueberweisen(BigDecimal betrag, Girokonto empfaengerKonto) {
+        if (getKontostand().compareTo(betrag) >= 0 ) {
+            setKontostand(getKontostand().subtract(betrag));
+            empfaengerKonto.setKontostand(empfaengerKonto.getKontostand().add(betrag));
             return true;
         } else {
             return false;

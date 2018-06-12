@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Main extends Application {
@@ -33,8 +34,8 @@ public class Main extends Application {
         launch(args);
 
         Kontoinhaber test = new Kontoinhaber(1, "Mad Max", "Str");
-        Sparkonto testKonto1 = new Sparkonto(1, LocalDate.now(), 1000f,1);
-        Girokonto testKonto2 = new Girokonto(3, LocalDate.now(), 1000f,10000f, 1);
+        Sparkonto testKonto1 = new Sparkonto(1, LocalDate.now(), new BigDecimal(1000),1);
+        Girokonto testKonto2 = new Girokonto(3, LocalDate.now(), new BigDecimal(1000),new BigDecimal(10000), 1);
 
 
 

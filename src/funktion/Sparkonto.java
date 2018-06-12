@@ -1,6 +1,7 @@
 package funktion;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -9,17 +10,17 @@ import java.time.LocalDate;
  */
 public class Sparkonto extends Konto {
 
-    public Sparkonto(Integer kontoNummer, LocalDate eroeffnungsdatum, Float kontostand, Integer kundennummerInhaber) {
+    public Sparkonto(Integer kontoNummer, LocalDate eroeffnungsdatum, BigDecimal kontostand, Integer kundennummerInhaber) {
         super(kontoNummer, eroeffnungsdatum, kontostand, kundennummerInhaber);
     }
 
-    public void einzahlen(Float betrag) {
-        super.setKontostand(super.getKontostand() + betrag);
+    public void einzahlen(BigDecimal betrag) {
+        super.setKontostand(super.getKontostand().add(betrag));
     }
 
-    public void auszahlen(Float betrag) {
-        if (super.getKontostand() >= betrag) {
-            super.setKontostand(super.getKontostand() - betrag);
+    public void auszahlen(BigDecimal betrag) {
+        if (super.getKontostand().compareTo(betrag) >= 0) {
+            super.setKontostand(super.getKontostand().subtract(betrag));
         }
     }
 

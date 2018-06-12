@@ -7,6 +7,7 @@ import funktion.Konto;
 import funktion.Kontoinhaber;
 import funktion.Sparkonto;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,14 +79,14 @@ public class DatenbankService {
 
     private Sparkonto datenLadenSparkonto(Integer kontonummer, ResultSet rs) throws SQLException{
 
-        Sparkonto konto = new Sparkonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getFloat(3), rs.getInt(5));
+        Sparkonto konto = new Sparkonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getBigDecimal(3), rs.getInt(5));
 
         return konto;
     }
 
     private Girokonto datenLadenGirokonto(Integer kontonummer, ResultSet rs) throws SQLException{
 
-        Girokonto konto = new Girokonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getFloat(3), rs.getFloat(4), rs.getInt(5));
+        Girokonto konto = new Girokonto(rs.getInt(1), rs.getDate(2).toLocalDate(), rs.getBigDecimal(3), rs.getBigDecimal(4), rs.getInt(5));
 
         return konto;
     }
@@ -175,7 +176,7 @@ public class DatenbankService {
     public void datenSpeichernKonto(Konto konto) {
         Statement stmt = null;
         try {
-            Float dispo = null;
+            BigDecimal dispo = null;
             String sql;
             if (konto.getClass().getSimpleName().equals("Girokonto")) {
                 Girokonto gkonto = (Girokonto) konto;

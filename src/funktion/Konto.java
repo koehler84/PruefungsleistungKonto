@@ -1,5 +1,6 @@
 package funktion;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -9,11 +10,11 @@ import java.time.LocalDate;
 public class Konto {
     private Integer kontoNummer;
     private LocalDate eroeffnungsdatum;
-    private Float kontostand;
+    private BigDecimal kontostand;
     private Integer kundennummerInhaber;
 
 
-    public Konto(Integer kontoNummer, LocalDate eroeffnungsdatum, Float kontostand, Integer kundennummerInhaber) {
+    public Konto(Integer kontoNummer, LocalDate eroeffnungsdatum, BigDecimal kontostand, Integer kundennummerInhaber) {
         this.kontoNummer = kontoNummer;
         this.eroeffnungsdatum = eroeffnungsdatum;
         this.kontostand = kontostand;
@@ -36,11 +37,11 @@ public class Konto {
         this.eroeffnungsdatum = eroeffnungsdatum;
     }
 
-    public Float getKontostand() {
+    public BigDecimal getKontostand() {
         return kontostand;
     }
 
-    public void setKontostand(Float kontostand) {
+    public void setKontostand(BigDecimal kontostand) {
         this.kontostand = kontostand;
     }
 

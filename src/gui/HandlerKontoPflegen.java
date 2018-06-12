@@ -11,6 +11,8 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
+import java.math.BigDecimal;
+
 
 /**
  * Created by VaniR on 10.06.2018.
@@ -54,7 +56,7 @@ public class HandlerKontoPflegen {
     }
     @FXML protected void dispoPressed(ActionEvent event) {
         Girokonto gkonto = (Girokonto) konto;
-        if (gkonto.aufDispoAenderung(Float.parseFloat(tfDispoaenderung.getText()))) {
+        if (gkonto.aufDispoAenderung(new BigDecimal(tfDispoaenderung.getText()))) {
             KontoService.safeKonto(gkonto);
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

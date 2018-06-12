@@ -9,6 +9,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+import java.math.BigDecimal;
+
 
 /**
  * Created by VaniR on 10.06.2018.
@@ -50,7 +52,7 @@ public class HandlerKontoTransaktion {
     }
 
     @FXML protected void ueberweisungPressed(ActionEvent event) {
-        if (!kontoSender.ueberweisen(Float.parseFloat(tfUeberweisung.getText()), kontoEmpfaenger)){
+        if (!kontoSender.ueberweisen(new BigDecimal(tfUeberweisung.getText()), kontoEmpfaenger)){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setContentText("Senderkonto verfügt nicht über ausreichend Geld");
