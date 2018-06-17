@@ -33,4 +33,15 @@ public class KontoService {
         DatenbankService datenbank = new DatenbankService();
         return datenbank.alleKundenLaden();
     }
+
+    public static Integer getNewKontonummer() throws Exception{
+        DatenbankService datenbank = new DatenbankService();
+        return datenbank.neueKontonummer() + 1;
+    }
+
+    public static void safeNewKunde(Kontoinhaber kontoinhaber, Konto konto) throws Exception{
+        DatenbankService datenbank = new DatenbankService();
+        datenbank.datenSpeichernKontoinhaber(kontoinhaber);
+        datenbank.datenSpeichernKonto(konto);
+    }
 }

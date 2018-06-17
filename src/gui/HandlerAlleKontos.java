@@ -65,6 +65,6 @@ public class HandlerAlleKontos {
         tcEroeffnungsdatum.setCellValueFactory(cellData -> cellData.getValue().eroeffnungsdatumProperty());
         tblKonten.setItems(konten);
 
-        tfGesamtsumme.setText(kumulierterKontostand.toString());
+        tfGesamtsumme.setText(String.format("%.2f €", kumulierterKontostand));
     }
 }

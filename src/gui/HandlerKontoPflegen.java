@@ -92,6 +92,5 @@ public class HandlerKontoPflegen {
         btnLoeschen.setDisable(true);
         txtDispoaenderungText.setVisible(false);
         tfDispoaenderung.setVisible(false);
-
     }
 }

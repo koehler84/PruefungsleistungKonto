@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -24,7 +21,7 @@
             <DatePicker fx:id="dpEroeffnungsDatum" GridPane.columnIndex="1" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Eröffnungdatum: " />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kundennummer: " GridPane.rowIndex="1" />
-            <TextField fx:id="tfKundennummer" onKeyTyped="#kundennummerPressed" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="tfKundennummer" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name: " GridPane.rowIndex="2" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Adresse: " GridPane.rowIndex="3" />
             <TextField fx:id="tfName" GridPane.columnIndex="1" GridPane.rowIndex="2" />
