@@ -1,11 +1,8 @@
 package gui;
 
-import datenbank.KontoNichtVorhandenException;
 import funktion.Girokonto;
 import funktion.Konto;
 import funktion.KontoService;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

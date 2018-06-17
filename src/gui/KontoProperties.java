@@ -18,13 +18,13 @@ public class KontoProperties {
 
     public KontoProperties(Integer kontonummer , LocalDate eroeffnungsdatum, BigDecimal dispo, BigDecimal kontostand) {
         this.kontonummer = new SimpleIntegerProperty(kontonummer);
-        this.eroeffnungsdatum = new SimpleObjectProperty<LocalDate>(eroeffnungsdatum);
+        this.eroeffnungsdatum = new SimpleObjectProperty<>(eroeffnungsdatum);
         if (dispo == null) {
             this.dispo = new SimpleStringProperty("Kein Girokonto");
         } else {
-            this.dispo = new SimpleStringProperty(new DecimalFormat("#0.00 €").format(dispo.setScale(2)).toString());
+            this.dispo = new SimpleStringProperty(new DecimalFormat("#0.00 €").format(dispo));
         }
-        this.kontostand = new SimpleStringProperty(new DecimalFormat("#0.00 €").format(kontostand.setScale(2)).toString());
+        this.kontostand = new SimpleStringProperty(new DecimalFormat("#0.00 €").format(kontostand));
     }
 
     public int getKontonummer() {

@@ -2,10 +2,7 @@ package gui;
 
 import funktion.Currency;
 import funktion.Girokonto;
-import funktion.Konto;
 import funktion.KontoService;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -26,18 +23,14 @@ public class HandlerKontoTransaktion {
     Girokonto kontoEmpfaenger;
 
     @FXML public void initialize() {
-        tfUeberweisung.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
-            {
-                if (!newPropertyValue) {
-                    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+        tfUeberweisung.focusedProperty().addListener((arg0, oldPropertyValue, newPropertyValue) -> {
+            if (!newPropertyValue) {
+                NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.GERMANY);
 
-                    tfUeberweisung.setText(currencyFormatter.format(new BigDecimal(tfUeberweisung.getText())));
-                }
-                if (newPropertyValue) {
-                    tfUeberweisung.setText("");
-                }
+                tfUeberweisung.setText(currencyFormatter.format(new BigDecimal(tfUeberweisung.getText())));
+            }
+            if (newPropertyValue) {
+                tfUeberweisung.setText("");
             }
         });
         btnUeberweisung.setDisable(true);

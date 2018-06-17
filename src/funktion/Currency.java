@@ -1,10 +1,6 @@
 package funktion;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.Locale;
 
 /**
  * Created by VaniR on 15.06.2018.
@@ -12,7 +8,7 @@ import java.util.Locale;
  */
 public class Currency {
     public BigDecimal parseTextbox (String valueCurrency) throws Exception {
-        BigDecimal value = null;
+        BigDecimal value;
         //Nur für deutsche Notation 1.000,00
         valueCurrency = valueCurrency.replaceAll("\\.", "");
         valueCurrency = valueCurrency.replaceAll(" ", "");

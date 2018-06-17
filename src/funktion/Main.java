@@ -1,14 +1,10 @@
 package funktion;
 
-import datenbank.DatenbankService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public class Main extends Application {
 

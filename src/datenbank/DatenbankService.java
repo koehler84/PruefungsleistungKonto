@@ -37,7 +37,7 @@ public class DatenbankService {
     public Konto datenLadenKonto(Integer kontonummer) throws Exception{
         Konto konto = null;
         Statement stmt = null;
-        ResultSet rs = null;
+        ResultSet rs;
 
         con = ds.getConnection();
 
@@ -63,8 +63,8 @@ public class DatenbankService {
 
         if (konto == null) {
             throw new KontoNichtVorhandenException("Kontonummer " + kontonummer + " nicht vergeben.");
+            // Handle any errors that may have occurred.
         }
-        // Handle any errors that may have occurred.
 
 
         if (rs != null) rs.close();
@@ -98,7 +98,7 @@ public class DatenbankService {
     public Kontoinhaber datenLadenKontoinhaber(Integer kundennummer) throws Exception{
         Kontoinhaber kontoinhaber = null;
         Statement stmt = null;
-        ResultSet rs = null;
+        ResultSet rs;
 
         con = ds.getConnection();
 
@@ -152,7 +152,20 @@ public class DatenbankService {
         String sql;
         con = ds.getConnection();
 
-        if (datenLadenKontoinhaber(kontoinhaber.getKundenNummer()) == null) {
+
+        try {
+
+            if (datenLadenKontoinhaber(kontoinhaber.getKundenNummer()) != null) {
+                con = ds.getConnection();
+
+                PreparedStatement querySaveKunde = con.prepareStatement("UPDATE kontoinhaber SET name = ?, adresse = ? WHERE kundennummer = ?");
+                querySaveKunde.setString(1, kontoinhaber.getName());
+                querySaveKunde.setString(2, kontoinhaber.getAdresse());
+                querySaveKunde.setInt(3, kontoinhaber.getKundenNummer());
+
+                querySaveKunde.executeUpdate();
+            }
+        } catch (KeinKontoinhaberVorhandenException e) {
             con = ds.getConnection();
 
             PreparedStatement querySaveKunde = con.prepareStatement("INSERT INTO kontoinhaber(kundennummer, name, adresse) VALUES (?, ? , ?)");
@@ -161,15 +174,7 @@ public class DatenbankService {
             querySaveKunde.setString(3, kontoinhaber.getAdresse());
 
             querySaveKunde.executeUpdate();
-        } else {
-            con = ds.getConnection();
 
-            PreparedStatement querySaveKunde = con.prepareStatement("UPDATE kontoinhaber SET name = ?, adresse = ? WHERE kundennummer = ?");
-            querySaveKunde.setString(1, kontoinhaber.getName());
-            querySaveKunde.setString(2, kontoinhaber.getAdresse());
-            querySaveKunde.setInt(3, kontoinhaber.getKundenNummer());
-
-            querySaveKunde.executeUpdate();
         }
 
         if (stmt != null) try {
@@ -192,32 +197,35 @@ public class DatenbankService {
             Girokonto gkonto = (Girokonto) konto;
             dispo = gkonto.getDispoLimit();
         }
-        if (konto.getKontoNummer() == null) {
-            con = ds.getConnection();
 
-            PreparedStatement querySaveKonto = con.prepareStatement("INSERT INTO konto(Kontonummer, Eroeffnungsdatum, Kontostand, Dispo, Kontoinhaber_Kundennummer) " +
-                    "VALUES (?, ?, ?, ?, ?)");
-            querySaveKonto.setInt(1, konto.getKontoNummer());
-            querySaveKonto.setObject(2, konto.getEroeffnungsdatum());
-            querySaveKonto.setBigDecimal(3, konto.getKontostand());
-            querySaveKonto.setBigDecimal(4, dispo);
-            querySaveKonto.setInt(5, konto.getKundennummerInhaber());
+         try {
+             if (datenLadenKonto(konto.getKontoNummer())!=null) {
+                 con = ds.getConnection();
 
-            querySaveKonto.executeUpdate();
-        } else {
-            con = ds.getConnection();
+                 PreparedStatement querySaveKonto = con.prepareStatement("UPDATE Konto SET Eroeffnungsdatum = ?, " +
+                         "Kontostand = ?, Dispo = ?, Kontoinhaber_Kundennummer = ? WHERE Kontonummer = ?");
+                 querySaveKonto.setInt(5, konto.getKontoNummer());
+                 querySaveKonto.setObject(1, konto.getEroeffnungsdatum());
+                 querySaveKonto.setBigDecimal(2, konto.getKontostand());
+                 querySaveKonto.setBigDecimal(3, dispo);
+                 querySaveKonto.setInt(4, konto.getKundennummerInhaber());
 
-            PreparedStatement querySaveKonto = con.prepareStatement("UPDATE Konto SET Eroeffnungsdatum = ?, " +
-                    "Kontostand = ?, Dispo = ?, Kontoinhaber_Kundennummer = ? WHERE Kontonummer = ?");
-            querySaveKonto.setInt(5, konto.getKontoNummer());
-            querySaveKonto.setObject(1, konto.getEroeffnungsdatum());
-            querySaveKonto.setBigDecimal(2, konto.getKontostand());
-            querySaveKonto.setBigDecimal(3, dispo);
-            querySaveKonto.setInt(4, konto.getKundennummerInhaber());
+                 querySaveKonto.executeUpdate();
+             }
+         } catch (KontoNichtVorhandenException e) {
+             con = ds.getConnection();
 
-            querySaveKonto.executeUpdate();
+             PreparedStatement querySaveKonto = con.prepareStatement("INSERT INTO konto(Kontonummer, Eroeffnungsdatum, Kontostand, Dispo, Kontoinhaber_Kundennummer) " +
+                     "VALUES (?, ?, ?, ?, ?)");
+             querySaveKonto.setInt(1, konto.getKontoNummer());
+             querySaveKonto.setObject(2, konto.getEroeffnungsdatum());
+             querySaveKonto.setBigDecimal(3, konto.getKontostand());
+             querySaveKonto.setBigDecimal(4, dispo);
+             querySaveKonto.setInt(5, konto.getKundennummerInhaber());
 
-        }
+             querySaveKonto.executeUpdate();
+         }
+
 
 
         if (stmt != null) stmt.close();
@@ -240,8 +248,8 @@ public class DatenbankService {
     }
 
     public List<Kontoinhaber> alleKundenLaden() throws Exception{
-        Statement stmt = null;
-        ResultSet rs = null;
+        Statement stmt;
+        ResultSet rs;
         List<Kontoinhaber> kontoinhaberList = new LinkedList<>();
 
         String sql = "SELECT Kundennummer FROM Kontoinhaber";
@@ -267,8 +275,8 @@ public class DatenbankService {
     }
 
     public Integer neueKontonummer() throws Exception{
-        Statement stmt = null;
-        ResultSet rs = null;
+        Statement stmt;
+        ResultSet rs;
         String sql = "SELECT Kontonummer FROM Konto ORDER BY Kontonummer";
         Integer kontonummer = 0;
 
@@ -281,4 +289,5 @@ public class DatenbankService {
         }
         return kontonummer;
     }
+
 }

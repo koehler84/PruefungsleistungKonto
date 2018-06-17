@@ -17,10 +17,10 @@ import java.util.List;
  */
 public class HandlerAlleKontos {
     private ObservableList<KontoProperties> konten = FXCollections.observableArrayList();
-    private List<Kontoinhaber> alleKunden;
+
     @FXML public void initialize() {
         try {
-            alleKunden = KontoService.getAlleKunden();
+            List<Kontoinhaber> alleKunden = KontoService.getAlleKunden();
             for (Kontoinhaber kontoinhaber : alleKunden) {
                 cbKunde.getItems().add(kontoinhaber);
             }
