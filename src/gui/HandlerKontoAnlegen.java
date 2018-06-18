@@ -34,7 +34,10 @@ public class HandlerKontoAnlegen {
                     tfAdresse.setText("");
                     tfName.setText("");
                 }catch (NumberFormatException e) {
-                    System.out.println("Keine gültige Nummer");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Error");
+                    alert.setContentText("Keine gültige Nummer");
+                    alert.showAndWait();
                     tfAdresse.setText("");
                     tfName.setText("");
                 } catch (Exception e) {
@@ -58,10 +61,18 @@ public class HandlerKontoAnlegen {
 
         tfDispo.focusedProperty().addListener((arg0, oldPropertyValue, newPropertyValue) -> {
             if (!newPropertyValue) {
-                NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+                try {
+                    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.GERMANY);
 
-                tfDispo.setText(currencyFormatter.format(new BigDecimal(tfDispo.getText())));
-                btnSpeichern.setDisable(false);
+                    tfDispo.setText(currencyFormatter.format(new BigDecimal(tfDispo.getText())));
+                    btnSpeichern.setDisable(false);
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Error");
+                    alert.setContentText("Keine gültige Nummer");
+                    alert.showAndWait();
+                    btnSpeichern.setDisable(true);
+                }
             }
             if (newPropertyValue) {
                 tfDispo.setText("");

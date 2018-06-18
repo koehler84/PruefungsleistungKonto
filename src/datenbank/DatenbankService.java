@@ -26,11 +26,11 @@ public class DatenbankService {
     public DatenbankService() {
         // Establish the connection.
         ds = new SQLServerDataSource();
-        ds.setServerName("localhost");
+        ds.setServerName("192.168.83.150");
         ds.setPortNumber(1433);
-        ds.setDatabaseName("KontoApp");
-        ds.setUser("skoehler");
-        ds.setPassword("skoehler");
+        ds.setDatabaseName("Anwend1");
+        ds.setUser("lg064801");
+        ds.setPassword("lg064801");
         ds.setIntegratedSecurity(false);
     }
 
