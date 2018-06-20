@@ -24,6 +24,12 @@ public class HandlerKontoAnlegen {
             if (!newPropertyValue) {
                 try {
                     Kontoinhaber kunde = KontoService.getKunde(Integer.parseInt(tfKundennummer.getText()));
+
+
+
+
+
+
                     if (kunde != null) {
                         tfAdresse.setText(kunde.getAdresse());
                         tfName.setText(kunde.getName());
@@ -33,6 +39,7 @@ public class HandlerKontoAnlegen {
                     System.out.println("Neuer Kunde");
                     tfAdresse.setText("");
                     tfName.setText("");
+                    btnSpeichern.setDisable(false);
                 }catch (NumberFormatException e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");

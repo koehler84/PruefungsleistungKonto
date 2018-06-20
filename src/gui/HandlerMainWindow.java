@@ -18,7 +18,7 @@ public class HandlerMainWindow extends Stage {
     @FXML protected void kontoAnzeigenPressed(ActionEvent event) {
         actiontarget.setText("anzeigen");
         try {
-            new WindowLoader("../gui/kontoAnzeigen.fxml");
+            new WindowLoader("/gui/kontoAnzeigen.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -27,7 +27,7 @@ public class HandlerMainWindow extends Stage {
     @FXML protected void kontoTransaktionPressed(ActionEvent event) {
         actiontarget.setText("transaktion");
         try {
-            new WindowLoader("../gui/kontoTransaktion.fxml");
+            new WindowLoader("/gui/kontoTransaktion.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,7 +36,7 @@ public class HandlerMainWindow extends Stage {
     @FXML protected void kontoÜbersichtPressed(ActionEvent event) {
         actiontarget.setText("übersicht");
         try {
-            new WindowLoader("../gui/alleKontos.fxml");
+            new WindowLoader("/gui/alleKontos.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,7 +45,7 @@ public class HandlerMainWindow extends Stage {
     @FXML protected void kontoPflegePressed(ActionEvent event) {
         actiontarget.setText("pflege");
         try {
-            new WindowLoader("../gui/kontoPflegen.fxml");
+            new WindowLoader("/gui/kontoPflegen.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public class HandlerMainWindow extends Stage {
     @FXML protected void kontoAnlegenPressed(ActionEvent event) {
         actiontarget.setText("anlegen");
         try {
-            new WindowLoader("../gui/kontoAnlegen.fxml");
+            new WindowLoader("/gui/kontoAnlegen.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -6,6 +6,7 @@ import funktion.Girokonto;
 import funktion.Konto;
 import funktion.Kontoinhaber;
 import funktion.Sparkonto;
+import javafx.scene.control.Alert;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -20,12 +21,11 @@ import java.util.List;
 public class DatenbankService {
     // Declare the JDBC objects.
     Connection con = null;
-    SQLServerDataSource ds = null;
+    private final SQLServerDataSource ds = new SQLServerDataSource();
 
-    //todo preparedStatements
     public DatenbankService() {
         // Establish the connection.
-        ds = new SQLServerDataSource();
+        //ds = new SQLServerDataSource();
         ds.setServerName("192.168.83.150");
         ds.setPortNumber(1433);
         ds.setDatabaseName("Anwend1");
@@ -198,33 +198,33 @@ public class DatenbankService {
             dispo = gkonto.getDispoLimit();
         }
 
-         try {
-             if (datenLadenKonto(konto.getKontoNummer())!=null) {
-                 con = ds.getConnection();
+        try {
+            if (datenLadenKonto(konto.getKontoNummer())!=null) {
+                con = ds.getConnection();
 
-                 PreparedStatement querySaveKonto = con.prepareStatement("UPDATE Konto SET Eroeffnungsdatum = ?, " +
-                         "Kontostand = ?, Dispo = ?, Kontoinhaber_Kundennummer = ? WHERE Kontonummer = ?");
-                 querySaveKonto.setInt(5, konto.getKontoNummer());
-                 querySaveKonto.setObject(1, konto.getEroeffnungsdatum());
-                 querySaveKonto.setBigDecimal(2, konto.getKontostand());
-                 querySaveKonto.setBigDecimal(3, dispo);
-                 querySaveKonto.setInt(4, konto.getKundennummerInhaber());
+                PreparedStatement querySaveKonto = con.prepareStatement("UPDATE Konto SET Eroeffnungsdatum = ?, " +
+                        "Kontostand = ?, Dispo = ?, Kontoinhaber_Kundennummer = ? WHERE Kontonummer = ?");
+                querySaveKonto.setInt(5, konto.getKontoNummer());
+                querySaveKonto.setObject(1, konto.getEroeffnungsdatum());
+                querySaveKonto.setBigDecimal(2, konto.getKontostand());
+                querySaveKonto.setBigDecimal(3, dispo);
+                querySaveKonto.setInt(4, konto.getKundennummerInhaber());
 
-                 querySaveKonto.executeUpdate();
-             }
-         } catch (KontoNichtVorhandenException e) {
-             con = ds.getConnection();
+                querySaveKonto.executeUpdate();
+            }
+        } catch (KontoNichtVorhandenException e) {
+            con = ds.getConnection();
 
-             PreparedStatement querySaveKonto = con.prepareStatement("INSERT INTO konto(Kontonummer, Eroeffnungsdatum, Kontostand, Dispo, Kontoinhaber_Kundennummer) " +
-                     "VALUES (?, ?, ?, ?, ?)");
-             querySaveKonto.setInt(1, konto.getKontoNummer());
-             querySaveKonto.setObject(2, konto.getEroeffnungsdatum());
-             querySaveKonto.setBigDecimal(3, konto.getKontostand());
-             querySaveKonto.setBigDecimal(4, dispo);
-             querySaveKonto.setInt(5, konto.getKundennummerInhaber());
+            PreparedStatement querySaveKonto = con.prepareStatement("INSERT INTO konto(Kontonummer, Eroeffnungsdatum, Kontostand, Dispo, Kontoinhaber_Kundennummer) " +
+                    "VALUES (?, ?, ?, ?, ?)");
+            querySaveKonto.setInt(1, konto.getKontoNummer());
+            querySaveKonto.setObject(2, konto.getEroeffnungsdatum());
+            querySaveKonto.setBigDecimal(3, konto.getKontostand());
+            querySaveKonto.setBigDecimal(4, dispo);
+            querySaveKonto.setInt(5, konto.getKundennummerInhaber());
 
-             querySaveKonto.executeUpdate();
-         }
+            querySaveKonto.executeUpdate();
+        }
 
 
 
@@ -254,18 +254,19 @@ public class DatenbankService {
 
         String sql = "SELECT Kundennummer FROM Kontoinhaber";
 
-        con = ds.getConnection();
+            con = ds.getConnection();
+
         stmt = con.createStatement();
         rs = stmt.executeQuery(sql);
+
 
         while ( rs.next() ) {
             kontoinhaberList.add(datenLadenKontoinhaber(rs.getInt("Kundennummer")));
         }
 
         if (kontoinhaberList == null) {
-                throw new KeineKontosVorhandenException("Es existieren keine Konten");
+            throw new KeineKontosVorhandenException("Es existieren keine Konten");
         }
-
 
         if (rs != null) rs.close();
         if (stmt != null) stmt.close();
